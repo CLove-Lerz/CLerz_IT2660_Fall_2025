@@ -1,113 +1,57 @@
-//import java.util.*;
-/*
- * IT-2660 - Lab 1
- * Christine Lerz: 
- */
-
-public class Main {
+class Main {
   public static void main(String[] args) {
-       System.out.println("hello, world!");
-    // Create an array with values {5, 9, 3, 12, 7, 3, 11, 5}
-    int[] numbers = {5, 9, 3, 12, 7, 3, 11, 5};
-    
-    // Output the array in order using a while loop
-    System.out.println("Array in order:");
-    int i = 0; 
-    while (i < numbers.length) { 
-      System.out.println(numbers[i]); 
-      i++; 
-    }
+    // 1. Define the vertices (buildings) based on the campus map
+      String[] vertices = {"Liberal Arts", "Student Services", "Health Careers & Sciences", "Health Technologies Center", "Recreation Center", "Technology Learning Center", "Business & Technology", "Theatre"};
 
-	// Output the array in reverse using a for loop
-    System.out.println("Array in reverse order:");
-    for (int j = numbers.length - 1; j >= 0; j--) {
-      System.out.println(numbers[j]);
-    }
+    // 2-Define Edges
+      int[] [] edges = {
+        {0,1}, {0,7},
+        {1,0}, {1,4}, {1,5}, {1,6},
+        {2,3}, {2,4},
+        {3,2},
+        {4,1}, {4,2},
+        {5,1},
+        {6,1}, {6,7},
+        {7,0}, {7,6}
+
+      };
+
+    // 3. Create the graph (name "graph") using the vertices and edges
+    UnweightedGraph<String> graph = new UnweightedGraph<>(vertices, edges);
     
-    // Output the first and last values of the array
-    System.out.println("First value of array: " + numbers[0]);
-    System.out.println("Last value of array: " + numbers[numbers.length - 1]);
-    
-    Lab1 lab = new Lab1();
-    System.out.println(lab.increment(1));
-    // Calling methods added as part of lab1
-    System.out.println("Max: " + lab.max(5, 25));
-    System.out.println("Min: " + lab.min(5, 10)); 
-    int totalSum = lab.sum(numbers);
-    System.out.println("Sum of array: " + totalSum);
-    double avg = lab.average(numbers);
-    System.out.println("The of the array numbers: " + avg);
-    int maxNumber = lab.max(numbers);
-    System.out.println("The maximum value in the array: " + maxNumber);
-    int minimumValue = lab.min(numbers);
-        System.out.println("The minimum value in the array: " + minimumValue);
+    // 4. Perform a depth-first search (name "dfs")(DFS) starting from the "Business & Technology" building
+    int startIndex = graph.getIndex("Business & Technology");
+    System.out.println("\nDepth-First Search (DFS) starting at \"Business & Technology\" (Index " + startIndex + "):");
+
+    UnweightedGraph<String>.SearchTree dfsTree = graph.dfs(startIndex);
+
+    // 5. Retrieve and print the search order of the DFS traversal
+    System.out.println("\n*** DFS Search Order ***");
+    System.out.println(dfsTree.getSearchOrder().stream()
+      .map(i -> graph.getVertex(i))
+      .collect(java.util.stream.Collectors.joining(", ")));
+
+    // 6. Print the parent-child relationships for each vertex during the DFS traversal
+    System.out.println("\n*** Parent-Child Relationships (DFS Tree Edges) ***");
+    for (int i = 0; i < graph.getSize(); i++) { // Loop through all vertices
+    int parentIndex = dfsTree.getParent(i); // Correctly call the method with an argument
+    if (parentIndex != -1) { // Check the parent index
+        System.out.println("Parent: " + graph.getVertex(parentIndex) + " -> Child: " + graph.getVertex(i));
     }
 }
+   
+    // 7. Call the printPath method (assuming this method exists in the UnweightedGraph class)
+    System.out.println("\n*** Paths from Business & Technology ***");
+    int htcIndex = graph.getIndex("Health Technologies Center");
+    if (htcIndex != -1) dfsTree.printPath(htcIndex);
+    int ssIndex = graph.getIndex("Student Services");
+    if (ssIndex != -1) dfsTree.printPath(ssIndex);
+    int rcIndex = graph.getIndex("Recreation Center");
+    if (rcIndex != -1) dfsTree.printPath(rcIndex);
 
-// Add all of the methods here
-class Lab1 {
-    public int increment(int num) {
-        return ++num;
-    }
-
-//max(int a, int b): Use an if-statement to return the maximum value.
-  public int max(int a, int b) {
-    if (a > b) {
-      return a;
-    } else {
-      return b;
-    }
+     // 8. Call printTree() to print the entire DFS tree (assuming this method exists in the UnweightedGraph class)
+     System.out.println("\n*** Full DFS Tree Structure ***");
+    dfsTree.printTree();
+    
   }
-  
-//min(int a, int b): Use an if-statement to return the minimum value.  
-  public int min(int a, int b) {
-        if (a < b) {
-            return a;
-        } else {
-            return b;
-        }
-    }
-    
-//sum(int[] nums): Return the sum of all values in the array.
-   public int sum(int[] nums) {
-        int total = 0;
-        for (int num : nums) {
-            total += num;
-        }
-        return total;
-    }
-    
-//average(int[] nums): Use a foreach loop to return the average.    
-   public double average(int[] nums) {
-            double sum = 0;
-            for (int num : nums) { 
-                sum += num;
-            }
-            return sum / nums.length;
-    }
-    
-//max(int[] nums): Use a for loop to return the maximum value.    
-    public int max(int[] nums) {
-            int maxValue = nums[0];
-            for (int i = 1; i < nums.length; i++) {
-            if (nums[i] > maxValue) {
-                maxValue = nums[i];
-            }
-        }
-        return maxValue;
-    }
-    
-//min(int[] nums): Use a for loop to return the minimum value.   
-    public int min(int[] nums) {
-            
-            int minValue = nums[0]; 
-            for (int i = 1; i < nums.length; i++) {
-                if (nums[i] < minValue) {
-                    minValue = nums[i]; 
-                }
-            }
-            return minValue;
-     }
-    
 }
-
